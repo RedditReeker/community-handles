@@ -4,8 +4,8 @@
   "private": true,
   "packageManager": "pnpm@9.7.0",
 "scripts": {
-  "dev": "pnpm prisma db push && next dev",
-  "build": "next build",
+  "dev": "next dev",
+  "build": "pnpm prisma db push && next build",
   "start": "next start",
   "lint": "next lint",
   "lint:fix": "next lint --fix",
