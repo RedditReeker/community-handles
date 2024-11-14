@@ -42,8 +42,7 @@
     "trailingComma": "es5"
   },
   "engines": {
-    "node": ">=16.8.0",
-    "pnpm": ">=7.0.0"
+    "node": ">=16.8.0"
   },
   "keywords": [
     "bluesky",
