@@ -1,45 +1,33 @@
-import { PrismaClient } from "@prisma/client"
-import { kv } from "@vercel/kv"
+import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 async function main() {
-  const keys = await kv.keys("*")
+  // Create a sample user relevant to Bluesky's requirements
+  await prisma.user.create({
+    data: {
+      name: 'Bluesky User',             // Example user name
+      email: 'blueskyuser@example.com',  // Example email
+      handle: 'blueskyuser.bsky.social', // Example handle, based on Bluesky format
+    },
+  });
 
-  for (const key of keys) {
-    const did = (await kv.get(key)) as string
-
-    const [handle, ...rest] = key.split(".")
-    const domain = rest.join(".")
-
-    await prisma.user.create({
-      data: {
-        did,
-        handle,
-        domain: {
-          connectOrCreate: {
-            where: {
-              name: domain,
-            },
-            create: {
-              name: domain,
-            },
-          },
-        },
-      },
-    })
-
-    console.log("Added", key, did)
-  }
+  // Optional: If you have a Handle table or other tables, add seeding here
+  await prisma.handle.create({
+    data: {
+      handle: 'blueskyuser.bsky.social',
+      userId: 1, // Link to the user created above; adjust if needed
+      platform: 'Bluesky',
+      verified: true,
+    },
+  });
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
   })
-
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
